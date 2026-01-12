@@ -1,0 +1,23 @@
+volumes:
+  etc_wireguard:
+    name: wg-easy_etc_wireguard  # 保留现有数据卷
+
+services:
+  wg-easy:
+    container_name: wg-easy
+    image: ghcr.io/wg-easy/wg-easy
+    network_mode: host  # 直接使用宿主机网络（无需端口映射）
+    environment:
+      - LANG=en
+      - WG_HOST=47.119.112.92  # 你的阿里云公网IP（必须修改！）
+      # 可选参数（根据需求取消注释）：
+#      - WG_DEFAULT_ADDRESS=10.8.0.0/24  # 客户端IP分配范围
+      # - WG_DEFAULT_DNS=1.1.1.1       # 客户端DNS
+      # - WG_MTU=1300                  # 解决连接不稳定问题
+      - WG_PERSISTENT_KEEPALIVE=25   # 保持NAT连接
+    volumes:
+      - etc_wireguard:/etc/wireguard  # 持久化配置和数据
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
